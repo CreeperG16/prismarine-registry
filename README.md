@@ -50,7 +50,6 @@ Mapping to dimension data object containing dimension `name`, `minY` and `height
 * loads/writes data from an item states array inside the bedrock start game packet.
 
 ```js
-// In a client
 const registry = require('prismarine-registry')('bedrock_1.19.50');
 
 // Before 1.21.60
