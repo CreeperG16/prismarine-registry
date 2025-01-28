@@ -45,26 +45,37 @@ Mapping to dimension data object containing dimension `name`, `minY` and `height
 
 ### mcpe
 
-#### loadItemStates / writeItemStates
+#### loadItemStates, writeItemStates, writeItemRegistry
 
 * loads/writes data from an item states array inside the bedrock start game packet.
 
 ```js
 // In a client
-const { createClient } = require('bedrock-protocol');
 const registry = require('prismarine-registry')('bedrock_1.19.50');
 
-const client = createClient({
-  'host': '127.0.0.1'
+// Before 1.21.60
+// Client
+client.on('start_game', (packet) => {
+  // Loads the item IDs from StartGame
+  registry.handleStartGame(packet)
 })
 
-client.on('start_game', ({ itemstates }) => {
-  registry.loadItemStates(itemstates);
-})
-
-// In a server
+// Server
 server.on('connect', (client) => {
   const itemstates = registry.writeItemStates()
   client.write('start_game', { ...startGamePacket, itemstates })
+})
+
+// 1.21.60+
+// Client
+client.on('item_registry', (packet) => {
+  // Loads the item IDs from the ItemRegistryPacket
+  registry.handleItemRegistry(packet)
+})
+
+// Server
+server.on('connect', (client) => {
+  const itemRegistry = registry.writeItemRegistry()
+  client.write('item_registry', itemRegistry)
 })
 ```
